@@ -41,6 +41,9 @@ class Storage(models.Model):
 
 
 class Station(models.Model):
+    '''
+    Координаты меняются от 56.26077286, 36.37642921 до 55.05309867, 39.85718392
+    '''
     STATES = [
         ('building', 'Строится'),
         ('ready', 'Построена'),
