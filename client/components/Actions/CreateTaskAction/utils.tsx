@@ -5,7 +5,7 @@ import { FormikHelpers } from 'formik';
 import { makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
-import { showSnackbar, hideSnackbar } from 'client/slices';
+import { showSnackbar, hideSnackbar, setSnapshots } from 'client/slices';
 import { makeRequest } from 'client/features/request';
 
 import { Task } from 'client/typings';
@@ -31,7 +31,7 @@ export const useHandleSubmit = (params: Params) => {
   const handleSubmit = useCallback(
     async (values: Task, actions: FormikHelpers<Task>) => {
       try {
-        const { data } = await makeRequest.post(
+        const { data } = await makeRequest.post<{ snapshots: [] }>(
           '/api/emulate/',
           JSON.stringify(values),
           {
@@ -42,9 +42,7 @@ export const useHandleSubmit = (params: Params) => {
           }
         );
 
-        if (data.status === 'error') {
-          throw data.error || data.payload;
-        }
+        dispatch(setSnapshots({ snapshots: data.snapshots }));
 
         dispatch(
           showSnackbar({

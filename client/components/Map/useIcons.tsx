@@ -8,12 +8,15 @@ import {
   Build as BuildIcon,
 } from '@material-ui/icons';
 
-import { GasStation } from 'client/typings';
+import { FuelStation } from 'client/typings';
 import { theme } from 'client/components/theme';
 
-const defaults: Record<GasStation['template'], React.ReactNode> = {
-  built: <LocalGasStationIcon color="primary" fontSize="large" />,
+import { TankerIcon } from './TankerIcon';
+
+const defaults: Record<FuelStation['state'] | 'tanker', React.ReactNode> = {
+  ready: <LocalGasStationIcon color="primary" fontSize="large" />,
   building: <BuildIcon color="primary" fontSize="default" />,
+  tanker: <TankerIcon />,
 };
 
 export const useIcons = (ymaps: any) => {

@@ -1,6 +1,7 @@
 MOCK_SNAPSHOTS = {
-    'snapshots': {
-        '1': {
+    'snapshots': [
+        {
+            'id': 1,
             'fuelStations': [
                 {
                     'id': 1,
@@ -66,7 +67,8 @@ MOCK_SNAPSHOTS = {
                 }
             ]
         },
-        '2': {
+        {
+            'id': 2,
             'fuelStations': [
                 {
                     'id': 1,
@@ -132,7 +134,8 @@ MOCK_SNAPSHOTS = {
                 }
             ]
         },
-        '3': {
+        {
+            'id': 3,
             'fuelStations': [
                 {
                     'id': 1,
@@ -198,5 +201,5 @@ MOCK_SNAPSHOTS = {
                 }
             ]
         } 
-    }
+    ]
 }

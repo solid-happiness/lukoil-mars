@@ -3,11 +3,11 @@ import {
   combineReducers,
   getDefaultMiddleware,
 } from '@reduxjs/toolkit';
-import gasStations from 'client/slices/gasStations';
+import snapshots from 'client/slices/snapshots';
 import snackbar from 'client/slices/snackbar';
 
 export const rootReducer = combineReducers({
-  gasStations,
+  snapshots,
   snackbar,
 });
 

@@ -1,2 +1,2 @@
-export * from './gasStations';
+export * from './snapshots';
 export * from './snackbar';

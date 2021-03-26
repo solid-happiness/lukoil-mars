@@ -1,11 +1,8 @@
 import { path, pathOr, indexBy, prop } from 'ramda';
 import { createSelector } from '@reduxjs/toolkit';
-import { GasStation } from 'client/typings';
+import { Snapshot } from 'client/typings';
 
-export const getGasStations = pathOr([] as GasStation[], [
-  'gasStations',
-  'stations',
-]);
+export const getGasStations = pathOr([] as Snapshot[], ['snapshots', 'list']);
 
 export const getGasStationsById = createSelector(
   getGasStations,

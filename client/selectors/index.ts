@@ -1,1 +1,1 @@
-export * from './gasStations';
+export * from './snapshots';

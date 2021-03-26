@@ -1,12 +1,13 @@
 import React from 'react';
 import useForceUpdate from 'use-force-update';
 import { useDispatch } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core';
 import { Map as YMap, Placemark, withYMaps } from 'react-yandex-maps';
 import { map } from 'ramda';
 
-import { toggleActive } from 'client/slices/gasStations';
-import { GasStation } from 'client/typings';
+import { Snapshot } from 'client/typings';
+import { setActive } from 'client/slices/snapshots';
 import { useIcons } from './useIcons';
 
 const useStyles = makeStyles(() => ({
@@ -22,11 +23,11 @@ const useStyles = makeStyles(() => ({
 
 type Props = {
   ymaps: any;
-  stations: GasStation[];
+  snapshots: Snapshot[];
 };
 
 export const Map: React.ComponentType<any> = withYMaps(
-  ({ ymaps, stations }: Props) => {
+  ({ ymaps, snapshots = [] }: Props) => {
     const s = useStyles();
     const dispatch = useDispatch();
     const forceUpdate = useForceUpdate();
@@ -47,32 +48,71 @@ export const Map: React.ComponentType<any> = withYMaps(
             autoFitToViewport: 'always',
           }}
         >
-          {map((station) => {
-            if (!icons[station.template]) {
-              return null;
-            }
+          {map(
+            (snapshot) => (
+              <>
+                {map((station) => {
+                  const { latitude, longitude } = station.location;
 
-            return (
-              <Placemark
-                key={station.id}
-                geometry={station.location}
-                options={{
-                  hintContent: 'Метка с прямоугольным HTML макетом',
-                  iconLayout: icons[station.template],
-                  // Описываем фигуру активной области "Прямоугольник".
-                  iconShape: {
-                    type: 'Rectangle',
-                    // Прямоугольник описывается в виде двух точек - верхней левой и нижней правой.
-                    coordinates: [
-                      [-25, -25],
-                      [25, 25],
-                    ],
-                  },
-                }}
-                onClick={() => dispatch(toggleActive({ id: station.id }))}
-              />
-            );
-          }, stations)}
+                  return (
+                    <Placemark
+                      key={station.id}
+                      geometry={[latitude, longitude]}
+                      options={{
+                        hintContent: 'Метка с прямоугольным HTML макетом',
+                        iconLayout: icons[station.state],
+                        iconShape: {
+                          type: 'Rectangle',
+                          coordinates: [
+                            [-25, -25],
+                            [25, 25],
+                          ],
+                        },
+                      }}
+                      onClick={() =>
+                        dispatch(
+                          setActive({
+                            snapshotId: snapshot.id,
+                            stationId: station.id,
+                          })
+                        )
+                      }
+                    />
+                  );
+                }, snapshot.fuelStations)}
+                {map((tanker) => {
+                  const { latitude, longitude } = tanker.location;
+
+                  return (
+                    <Placemark
+                      key={tanker.id}
+                      geometry={[latitude, longitude]}
+                      options={{
+                        hintContent: 'Метка с прямоугольным HTML макетом',
+                        iconLayout: icons.tanker,
+                        iconShape: {
+                          type: 'Rectangle',
+                          coordinates: [
+                            [-25, -25],
+                            [25, 25],
+                          ],
+                        },
+                      }}
+                      onClick={() =>
+                        dispatch(
+                          setActive({
+                            snapshotId: snapshot.id,
+                            tankerId: tanker.id,
+                          })
+                        )
+                      }
+                    />
+                  );
+                }, snapshot.tankers)}
+              </>
+            ),
+            snapshots
+          )}
         </YMap>
       </div>
     );
