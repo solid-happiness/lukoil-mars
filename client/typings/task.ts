@@ -1,0 +1,22 @@
+export type Task = {
+  storageAmountFuel: number;
+  stationAmountFuel: number;
+  stationsCount: number;
+  tankersCount: number;
+  monthTimestampCount: number;
+  tankerCost: number;
+  fuelDeliveryTime: number;
+  carRefuelingTime: number;
+  baseAvgReceipt: number;
+  receiptAvgCoef: number;
+  maintenanceStationCost: number;
+  maintenanceColumnCost: number;
+  stationBuildingTime: number;
+  columnBuildingTime: number;
+  directorSalary: number;
+  refuillerSalary: number;
+  cashierSalary: number;
+  securitySalary: number;
+  needAdditionalCashierColumnCount: number;
+  dismissalProbability: number;
+};

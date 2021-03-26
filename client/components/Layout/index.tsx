@@ -1,7 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 
-import { Header } from '../Header';
+import { Header } from 'client/components/Header';
+import { Notification } from './Notification';
 
 const useStyles = makeStyles(() => ({
   '@global': {
@@ -27,6 +28,7 @@ export const Layout: React.FC = ({ children }) => {
     <div className={s.root}>
       <Header />
       <main className={s.main}>{children}</main>
+      <Notification />
     </div>
   );
 };

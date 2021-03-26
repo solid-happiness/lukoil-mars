@@ -5,6 +5,7 @@ import { isEmpty } from 'ramda';
 
 import { Map } from 'client/components/Map';
 import { ActiveStation } from 'client/components/ActiveStation';
+import { Actions } from 'client/components/Actions';
 
 import { loadGasStations } from 'client/slices';
 import { getGasStations } from 'client/selectors';
@@ -22,6 +23,7 @@ export const Home: React.FC = () => {
   return (
     <>
       <ActiveStation />
+      <Actions />
       <Map stations={stations} />
     </>
   );

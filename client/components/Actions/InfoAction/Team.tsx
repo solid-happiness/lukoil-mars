@@ -3,28 +3,14 @@ import { map } from 'ramda';
 import { makeStyles, Typography } from '@material-ui/core';
 
 import { Link } from 'client/components/Link';
-import { team } from './team';
+import { members } from './members';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    position: 'absolute',
-    bottom: '64px',
-    background: '#f7f9fa',
-    padding: '10px 15px',
-    borderRadius: '8px',
-    [theme.breakpoints.down('md')]: {
-      left: 'calc(50%)',
-      transform: 'translate(-50%)',
-    },
-    [theme.breakpoints.down('sm')]: {
-      left: 'calc(50%)',
-      transform: 'translate(-50%)',
-    },
+    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
   team: {
-    display: 'grid',
-    grid: '1fr / repeat(4, 1fr)',
-    gridColumnGap: theme.spacing(2),
+    display: 'flex',
     alignItems: 'center',
     justifyItems: 'center',
     [theme.breakpoints.down('sm')]: {
@@ -37,11 +23,13 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       marginTop: 0,
     },
-    whiteSpace: 'nowrap',
+  },
+  person: {
+    marginRight: theme.spacing(1),
   },
 }));
 
-export const Footer: React.FC = () => {
+export const Team: React.FC = () => {
   const s = useStyles();
 
   return (
@@ -49,11 +37,16 @@ export const Footer: React.FC = () => {
       <section className={s.team}>
         {map(
           (person) => (
-            <Link url={person.github} key={person.name} target="_blank">
+            <Link
+              className={s.person}
+              url={person.github}
+              key={person.name}
+              target="_blank"
+            >
               {person.name}
             </Link>
           ),
-          team
+          members
         )}
       </section>
       <section className={s.copyright}>

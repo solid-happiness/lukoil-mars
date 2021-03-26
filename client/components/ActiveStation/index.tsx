@@ -7,15 +7,18 @@ import { getActiveGasStation } from 'client/selectors';
 
 import { Station } from './Station';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   drawer: {
     minWidth: '300px',
     background: 'linear-gradient(to bottom, #ffffff, #fffef6);',
-    borderTopLeftRadius: '8px',
-    borderBottomLeftRadius: '8px',
+    borderRadius: '8px',
     boxShadow: '0 2px 6px 0 rgb(0 0 0 / 20%)',
     fontSize: '14px',
     lineHeight: '16px',
+    right: theme.spacing(4),
+    top: theme.spacing(8),
+    bottom: theme.spacing(8),
+    height: 'auto',
   },
 }));
 

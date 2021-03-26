@@ -19,6 +19,10 @@ const useStyles = makeStyles((theme) => ({
     top: 50,
     left: 50,
     zIndex: 9999,
+    [theme.breakpoints.down('sm')]: {
+      top: 10,
+      left: 10,
+    },
   },
   box: {
     width: 50,
