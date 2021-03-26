@@ -1,0 +1,14 @@
+/node_modules
+/.next
+/venv
+.DS_Store
+.vscode
+
+/deploy/nginx.conf
+/deploy/*.service
+
+/logs
+*.pyc
+__pycache__
+
+db.*
