@@ -8,6 +8,7 @@ class DecisionMaking(decisionmaking_pb2_grpc.DecisionmakingServicer):
     def MakeSnapshot(self, request, context):
         '''Метод принятия решений'''
         snapshot = request.snapshot
+        return snapshot
 
 
 def serve():
