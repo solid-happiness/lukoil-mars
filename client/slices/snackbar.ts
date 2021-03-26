@@ -42,7 +42,7 @@ const snackbar = createSlice({
 
       return {
         ...state,
-        opne: true,
+        open: true,
         message,
         anchor,
         type,

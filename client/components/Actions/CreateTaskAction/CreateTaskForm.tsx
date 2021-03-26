@@ -1,14 +1,18 @@
 import React from 'react';
+import { map } from 'ramda';
 import {
   makeStyles,
-  OutlinedInput,
+  TextField,
   Button,
   Typography,
+  CircularProgress,
 } from '@material-ui/core';
 
 import { Formik, FormikProps } from 'formik';
 
 import { Task } from 'client/typings';
+
+import { fields } from './fields';
 import { useHandleSubmit } from './utils';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   form: {
+    display: 'flex',
+    flexDirection: 'column',
     marginTop: theme.spacing(2),
   },
   root: {
@@ -24,15 +30,20 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     marginTop: theme.spacing(4),
   },
+  input: {
+    marginTop: theme.spacing(2),
+    width: '300px',
+  },
 }));
 
 type Props = {
   task?: Task;
+  handleClose: () => void;
 };
 
-export const CreateTaskForm: React.FC<Props> = ({ task }) => {
+export const CreateTaskForm: React.FC<Props> = ({ task, handleClose }) => {
   const s = useStyles();
-  const handleSubmit = useHandleSubmit();
+  const handleSubmit = useHandleSubmit({ handleClose });
 
   if (!task) {
     return null;
@@ -45,22 +56,38 @@ export const CreateTaskForm: React.FC<Props> = ({ task }) => {
       </Typography>
       <Formik<Task> initialValues={task} onSubmit={handleSubmit}>
         {(formik: FormikProps<Task>) => {
-          console.log('values', formik.values);
+          const { values, handleChange, isSubmitting } = formik;
 
           return (
             <form className={s.form} onSubmit={formik.handleSubmit}>
-              <OutlinedInput
-                value={1}
-                onChange={formik.handleChange}
-                fullWidth
-              />
+              {map(
+                (field) => (
+                  <TextField
+                    className={s.input}
+                    key={field.name}
+                    name={field.name}
+                    value={values[field.name]}
+                    onChange={handleChange}
+                    label={field.title}
+                    variant="outlined"
+                    fullWidth
+                  />
+                ),
+                fields
+              )}
+
               <Button
                 className={s.submit}
+                disabled={isSubmitting}
                 type="submit"
                 variant="outlined"
                 color="primary"
               >
-                Создать задачу
+                {isSubmitting ? (
+                  <CircularProgress size={25} />
+                ) : (
+                  'Создать задачу'
+                )}
               </Button>
             </form>
           );

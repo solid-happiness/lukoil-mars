@@ -6,6 +6,8 @@ import cx from 'clsx';
 
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Fab, Props as FabProps } from 'client/components/Actions/Fab';
+
+import { Task } from 'client/typings';
 import { CreateTaskForm } from './CreateTaskForm';
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +57,7 @@ export const CreateTaskAction: React.FC<Props> = ({
 }) => {
   const s = useStyles();
   const [open, setOpen] = useState(false);
-  const [task, setTask] = useState();
+  const [task, setTask] = useState<Task>();
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (files: File[]) => {
@@ -100,7 +102,13 @@ export const CreateTaskAction: React.FC<Props> = ({
         variant="temporary"
         anchor="right"
       >
-        <CreateTaskForm task={task} />
+        <CreateTaskForm
+          task={task}
+          handleClose={() => {
+            setOpen(false);
+            setTask(undefined);
+          }}
+        />
       </Drawer>
     </>
   );
