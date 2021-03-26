@@ -4,21 +4,23 @@ from django.db import models
 from fuel import models as fuel_models
 
 class EmulationConfig(models.Model):
-    month_timestamp_count = models.PositiveIntegerField()
-    tanker_cost = models.PositiveIntegerField()
-    fuel_delivery_time = models.PositiveIntegerField()
-    car_refueling_time = models.PositiveIntegerField()
-    base_avg_receipt = models.PositiveIntegerField()
-    receipt_avg_coef = models.FloatField()
+    month_timestamp_count = models.PositiveIntegerField(verbose_name='количество условных единиц в месяце')
+    tanker_cost = models.PositiveIntegerField(verbose_name='тоимость покупки танкера для перевозки топлива')
+    fuel_delivery_time = models.PositiveIntegerField(verbose_name='время доставки топлива до заправочной станции')
+    car_refueling_time = models.PositiveIntegerField(verbose_name='время заправки одного автомобиля')
+    base_avg_receipt = models.PositiveIntegerField(verbose_name='базовый средний чек на заправочной станции')
+    receipt_avg_coef = models.FloatField(verbose_name='коэффициент увеличения среднего чека')
     maintenance_station_cost = models.PositiveIntegerField(verbose_name='Стоимость обслуживания заправочной станции')
     maintenance_column_cost = models.PositiveIntegerField(verbose_name='Стоимость обслуживания колонки')
-    station_building_time = models.PositiveIntegerField()
-    column_building_time = models.PositiveIntegerField()
-    director_salary = models.PositiveIntegerField()
-    refuiller_salary = models.PositiveIntegerField()
-    cashier_salary = models.PositiveIntegerField()
-    security_salary = models.PositiveIntegerField()
-    need_additional_cashier_column_count = models.PositiveIntegerField()
+    station_building_time = models.PositiveIntegerField(verbose_name='время постройки заправочной станции')
+    column_building_time = models.PositiveIntegerField(verbose_name='время постройки заправочной колонки')
+    director_salary = models.PositiveIntegerField(verbose_name='зарплата директора')
+    refuiller_salary = models.PositiveIntegerField(verbose_name='зарплата заправщика')
+    cashier_salary = models.PositiveIntegerField(verbose_name='зарплата кассира')
+    security_salary = models.PositiveIntegerField(verbose_name='зарплата охранника')
+    need_additional_cashier_column_count = models.PositiveIntegerField(
+        help_text='количество заправочных колонок, при котором необходимо нанять дополнительного кассира'
+    )
     dismissal_probability = models.FloatField(verbose_name='Вероятность увольнения')
 
     @classmethod
