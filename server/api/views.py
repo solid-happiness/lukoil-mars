@@ -37,7 +37,7 @@ def create_emulation(request):
         needAdditionalCashierColumnCount - количество заправочных колонок, при котором необходимо нанять дополнительного кассира
         dismissalProbability - вероятность увольнения сотрудника, устроенного по ГПХ
     '''
-    
+
     return JsonResponse({
-        'shapshots': MOCK_SNAPSHOTS,
+        'snapshots': MOCK_SNAPSHOTS['snapshots'],
     })

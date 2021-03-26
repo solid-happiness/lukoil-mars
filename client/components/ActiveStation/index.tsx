@@ -2,10 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 
-import { toggleActive } from 'client/slices';
-import { getActiveGasStation } from 'client/selectors';
+import { setActiveSnapshot } from 'client/slices';
+import { getActiveStation, getActiveTanker } from 'client/selectors';
 
-import { Station } from './Station';
+import { StationInfo } from './StationInfo';
+import { TankerInfo } from './TankerInfo';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -25,19 +26,25 @@ const useStyles = makeStyles((theme) => ({
 export const ActiveStation: React.FC = () => {
   const s = useStyles();
   const dispatch = useDispatch();
-  const activeStation = useSelector(getActiveGasStation);
+
+  const activeStation = useSelector(getActiveStation);
+  const activeTanker = useSelector(getActiveTanker);
 
   return (
     <Drawer
-      open={!!activeStation}
-      onClose={() => dispatch(toggleActive({}))}
+      open={!!(activeStation || activeTanker)}
+      onClose={() => dispatch(setActiveSnapshot({}))}
       classes={{
         paper: s.drawer,
       }}
       variant="temporary"
       anchor="right"
     >
-      <Station station={activeStation} />
+      {activeStation ? (
+        <StationInfo station={activeStation} />
+      ) : (
+        <TankerInfo tanker={activeTanker} />
+      )}
     </Drawer>
   );
 };

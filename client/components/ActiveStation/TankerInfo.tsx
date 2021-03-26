@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 
-import { GasStation } from 'client/typings';
+import { Tanker } from 'client/typings';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,18 +14,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  station?: GasStation;
+  tanker?: Tanker;
 };
 
-export const Station: React.FC<Props> = ({ station }) => {
+export const TankerInfo: React.FC<Props> = ({ tanker }) => {
   const s = useStyles();
-  if (!station) {
+  if (!tanker) {
     return null;
   }
 
   return (
     <div className={s.root}>
-      <Typography variant="h6">{station.title}</Typography>
+      <Typography variant="h6">{tanker.fuelAmount}</Typography>
     </div>
   );
 };

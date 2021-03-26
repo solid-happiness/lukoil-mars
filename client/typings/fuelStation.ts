@@ -4,7 +4,7 @@ export type FuelStation = {
     latitude: number;
     longitude: number;
   };
-  state: 'ready' | 'building';
+  state: 'ready' | 'building' | 'destroyed';
   fuelAmount: number;
   fuelColumns: number;
   actions: ['Наняли нового сотрудника'];

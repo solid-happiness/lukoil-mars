@@ -11,12 +11,13 @@ import {
 import { FuelStation } from 'client/typings';
 import { theme } from 'client/components/theme';
 
-import { TankerIcon } from './TankerIcon';
+import { SvgIcon } from './SvgIcon';
 
 const defaults: Record<FuelStation['state'] | 'tanker', React.ReactNode> = {
   ready: <LocalGasStationIcon color="primary" fontSize="large" />,
-  building: <BuildIcon color="primary" fontSize="default" />,
-  tanker: <TankerIcon />,
+  building: <BuildIcon color="primary" fontSize="large" />,
+  tanker: <SvgIcon path="/truck.svg" />,
+  destroyed: <SvgIcon path="/repair.svg" />,
 };
 
 export const useIcons = (ymaps: any) => {
