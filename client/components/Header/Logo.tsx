@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     top: 50,
     left: 50,
-    zIndex: 1,
+    zIndex: 9999,
   },
   box: {
     width: 50,
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
   '@global': {
     ".tippy-box[data-theme~='logo']": {
-      background: 'linear-gradient(to right, #8a2387, #e94057, #f27121)',
+      background: 'linear-gradient(to right, #e3192d, #e94057, #f27121)',
       color: 'white',
       fontSize: '1.2rem',
     },
@@ -49,12 +49,16 @@ export const Logo: React.FC<Props> = ({ className }) => {
   const root = useRef<HTMLLinkElement>();
 
   useMount(() => {
-    tippy(root.current!, {
+    const tooltip = tippy(root.current!, {
       placement: 'right',
       content: 'Лукойл на Марсе!',
       theme: 'logo',
       arrow: false,
+      trigger: 'manual',
+      hideOnClick: false,
     });
+
+    tooltip.show();
   });
 
   return (

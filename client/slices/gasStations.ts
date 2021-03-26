@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 import { GasStation, AppThunk } from 'client/typings';
 
 type GasStationsState = {
+  activeId?: string;
   loading?: boolean;
   stations: GasStation[];
 };
@@ -28,10 +28,21 @@ const gasStations = createSlice({
       loading: false,
       stations: action.payload.stations,
     }),
+    toggleActive: (
+      state: GasStationsState,
+      action: PayloadAction<{ id?: string }>
+    ) => ({
+      ...state,
+      activeId: state.activeId ? undefined : action?.payload?.id,
+    }),
   },
 });
 
-const { startLoading, stationsLoaded } = gasStations.actions;
+export const {
+  startLoading,
+  stationsLoaded,
+  toggleActive,
+} = gasStations.actions;
 
 export const loadGasStations = (): AppThunk => async (dispatch) => {
   dispatch(startLoading());

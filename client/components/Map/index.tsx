@@ -1,10 +1,11 @@
 import React from 'react';
 import useForceUpdate from 'use-force-update';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { Map as YMap, Placemark, withYMaps } from 'react-yandex-maps';
-
 import { map } from 'ramda';
 
+import { toggleActive } from 'client/slices/gasStations';
 import { GasStation } from 'client/typings';
 import { useIcons } from './useIcons';
 
@@ -27,6 +28,7 @@ type Props = {
 export const Map: React.ComponentType<any> = withYMaps(
   ({ ymaps, stations }: Props) => {
     const s = useStyles();
+    const dispatch = useDispatch();
     const forceUpdate = useForceUpdate();
     const icons = useIcons(ymaps);
 
@@ -67,9 +69,7 @@ export const Map: React.ComponentType<any> = withYMaps(
                     ],
                   },
                 }}
-                onClick={() => {
-                  console.log('on point clicked', station);
-                }}
+                onClick={() => dispatch(toggleActive({ id: station.id }))}
               />
             );
           }, stations)}

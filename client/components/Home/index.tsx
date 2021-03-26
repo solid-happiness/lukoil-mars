@@ -4,6 +4,8 @@ import { useMount } from 'react-use';
 import { isEmpty } from 'ramda';
 
 import { Map } from 'client/components/Map';
+import { ActiveStation } from 'client/components/ActiveStation';
+
 import { loadGasStations } from 'client/slices';
 import { getGasStations } from 'client/selectors';
 
@@ -17,5 +19,10 @@ export const Home: React.FC = () => {
     return null;
   }
 
-  return <Map stations={stations} />;
+  return (
+    <>
+      <ActiveStation />
+      <Map stations={stations} />
+    </>
+  );
 };
