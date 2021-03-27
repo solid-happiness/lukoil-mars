@@ -88,7 +88,7 @@ def make_snapshot(snapshot):
         map_x, map_y = MAP_CENTER
 
         location_s = station.location
-        location_t = station.location
+        location_t = tanker.location
 
         k = (location_s.longitude - map_y) / (
             location_s.latitude - map_x
@@ -124,14 +124,17 @@ def make_snapshot(snapshot):
     def build_column(station):
         '''Строим колонку на АЗС'''
         station.columns.append(
-            api_models.FuelColumn(busy_to=timestamp +
-                                  config.column_building_time)
+            api_models.FuelColumn(
+                busy_to=timestamp + config.column_building_time
+            )
         )
+        station.actions.append('Построили новую колонку')
         # Нанимаем заправщика
         station.employees.append(api_models.Employee(
             role='refueller',
             contract='td'
         ))
+        station.actions.append('Наняли нового заправщика')
         # Если колонок много, то нанимаем еще кассира
         number_of_cashiers = len(list(filter(
             lambda emp: emp.role == 'cashier', station.employees
@@ -141,6 +144,7 @@ def make_snapshot(snapshot):
                 role='cashier',
                 contract='td'
             ))
+            station.actions.append('Наняли нового кассира')
 
     def calculate_fuel_time(station):
         """
@@ -196,6 +200,8 @@ def make_snapshot(snapshot):
                     latitude=MAP_CENTER[0],
                     longitude=MAP_CENTER[1],
                 )
+                print('Вызвали танкер, ', timestamp)
+                station.actions.append('Вызвали танкер')
                 break
 
     def can_to_build_station():
@@ -252,7 +258,6 @@ def make_snapshot(snapshot):
 
     # Проверяем, не должен ли приехать сегодня какой-нибудь танкер
     # и пересчитываем их координаты на карте
-
     for tanker in snapshot.tankers:
 
         if tanker.busy_to == timestamp:
@@ -262,6 +267,10 @@ def make_snapshot(snapshot):
             )
             fuel_station = snapshot.fuel_stations[fuel_station_id]
             fuel_station.fuel_amount += tanker.fuel_amount
+            tanker.location = api_models.Location(
+                latitude=MAP_CENTER[0],
+                longitude=MAP_CENTER[1]
+            )
         elif tanker.busy_to > timestamp:
             fuel_station_id = get_fuel_station_by_id(
                 snapshot.fuel_stations,
