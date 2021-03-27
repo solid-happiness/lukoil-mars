@@ -4,6 +4,16 @@ from typing import List
 from django.db import models
 from . import desicionmaking
 
+from random import uniform
+
+
+MAP_COORDS = {
+    'left_x': 56.26077286,
+    'right_x': 55.05309867,
+    'top_y': 36.37642921,
+    'bottom_y': 39.85718392
+}
+
 
 class Employee:
     role: str
@@ -43,15 +53,18 @@ class Tanker:
     delivery_to: int
     fuel_amount: int
     busy_to: int
+    id: int
 
-    def __init__(self, location=None, delivery_to=None, fuel_amount=None, busy_to=None) -> None:
+    def __init__(self, location=None, delivery_to=None, fuel_amount=None, busy_to=None, id=None) -> None:
         self.location = location
         self.delivery_to = delivery_to
         self.fuel_amount = fuel_amount
         self.busy_to = busy_to
+        self.id = id
 
     def to_dict(self):
         return {
+            'id': self.id,
             'location': self.location.to_dict(),
             'deliveryTo': self.delivery_to,
             'fuelAmount': self.fuel_amount,
@@ -66,14 +79,16 @@ class FuelStation:
     columns: List[FuelColumn]
     busy_to: int
     employees: List[Employee]
+    actions: List[str]
 
-    def __init__(self, id=None, fuel_amount=None, location=None, columns=None, busy_to=None, employees=None) -> None:
+    def __init__(self, id=None, fuel_amount=None, location=None, columns=None, busy_to=None, employees=None, actions=None) -> None:
         self.id = id
         self.fuel_amount = fuel_amount
         self.location = location
         self.columns = columns
         self.busy_to = busy_to
         self.employees = employees
+        self.actions = []
 
     def get_employees_stat(self):
         employees = {
@@ -94,6 +109,7 @@ class FuelStation:
             'columnsCount': len(self.columns),
             'employees': self.get_employees_stat(),
             'state': 'ready',
+            'actions': self.actions,
         }
 
 
@@ -125,7 +141,7 @@ class Snapshot:
             'tankers': [
                 tanker.to_dict()
                 for tanker
-                in self.tankers
+                in self.tankers if tanker.busy_to > self.timestamp
             ],
         }
 
@@ -261,17 +277,18 @@ class Emulation(models.Model):
         config = EmulationConfig.from_dict(params)
         storage_amount_fuel = params.get('storageAmountFuel')
         station_amount_fuel = params.get('stationAmountFuel')
-        stations_count = params.get('stationsCount')
-        tankers_count = params.get('tankersCount')
+        stations_count = int(params.get('stationsCount'))
+        tankers_count = int(params.get('tankersCount'))
         start_snapshot = Snapshot()
         start_snapshot.timestamp = 1
         start_snapshot.bank = 0
         start_snapshot.fuel_storage_amount = storage_amount_fuel
 
         tankers = []
-        for _ in range(tankers_count):
+        for i in range(tankers_count):
             tankers.append(
                 Tanker(
+                    id=i+1,
                     location=Location(0, 0),
                     delivery_to=-1,
                     fuel_amount=None,
@@ -312,14 +329,12 @@ class Emulation(models.Model):
         result = []
 
         for i in range(int(params.get('monthTimestampCount')) * 12):
-            result.append(desicionmaking.make_snapshot(
-                start_snapshot, config).to_dict())
-            start_snapshot.timestamp += 1
-        emulate = cls.objects.create(
-            config=config,
-            snapshots=result,
-        )
-        return emulate.id, result
+            new_snapshot = desicionmaking.make_snapshot(
+                start_snapshot,
+                config,
+            )
+            result.append(new_snapshot.to_dict())
+            new_snapshot.timestamp += 1
 
     @classmethod
     def recalculate(cls, emulate_id, snapshot_id, fuel_supplies):

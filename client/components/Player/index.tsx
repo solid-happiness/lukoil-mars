@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useKey, useLatest } from 'react-use';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty, findIndex } from 'ramda';
+import { isEmpty, findIndex, last } from 'ramda';
 import { CODE_LEFT, CODE_RIGHT } from 'keycode-js';
 
-import { makeStyles, IconButton, Typography, Tooltip } from '@material-ui/core';
+import { makeStyles, IconButton } from '@material-ui/core';
 import {
   NavigateBefore as NavigateBeforeIcon,
   SkipNext as SkipNextIcon,
@@ -21,6 +21,8 @@ import {
   setTask,
 } from 'client/slices';
 import { getTask, getSnapshots, getActiveSnapshot } from 'client/selectors';
+
+import { Bank } from './Bank';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -148,15 +150,7 @@ export const Player: React.FC = () => {
           </IconButton>
         )}
         {!!activeSnapshot?.bank && (
-          <Tooltip
-            title={
-              <Typography className={s.tooltip} variant="body1">
-                Текущий банк
-              </Typography>
-            }
-          >
-            <Typography variant="body1">{activeSnapshot?.bank}₽</Typography>
-          </Tooltip>
+          <Bank bank={activeSnapshot?.bank} result={last(snapshots)?.bank} />
         )}
         <IconButton
           onClick={() => {

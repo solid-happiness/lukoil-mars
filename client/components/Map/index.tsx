@@ -96,14 +96,14 @@ export const Map: React.ComponentType<any> = withYMaps(
                       ],
                     },
                   }}
-                  onClick={() =>
+                  onClick={() => {
                     dispatch(
                       setActiveSnapshot({
                         snapshotId: snapshot.id,
                         tankerId: tanker.id,
                       })
-                    )
-                  }
+                    );
+                  }}
                 />
               );
             }, snapshot?.tankers || [])}
