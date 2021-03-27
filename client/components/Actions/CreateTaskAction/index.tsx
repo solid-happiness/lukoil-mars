@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { head } from 'ramda';
-import { makeStyles, Drawer } from '@material-ui/core';
+import { makeStyles, Fab, Drawer } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
 import cx from 'clsx';
 
 import { Create as CreateIcon } from '@material-ui/icons';
-import { Fab, Props as FabProps } from 'client/components/Actions/Fab';
+import { Action, Props as ActionProps } from 'client/components/Actions/Action';
 
 import { Task } from 'client/typings';
 import { CreateTaskForm } from './CreateTaskForm';
@@ -41,12 +41,21 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(8),
     bottom: theme.spacing(8),
     height: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 'unset',
+      width: '90vw',
+      right: 0,
+      top: theme.spacing(2),
+      bottom: theme.spacing(0),
+      borderTopRightRadius: 0,
+      borderBottomLeftRadius: 0,
+    },
   },
 }));
 
 type Props = {
   className?: string;
-  getTransform?: FabProps['getTransform'];
+  getTransform?: ActionProps['getTransform'];
   onClose: () => void;
 };
 
@@ -87,12 +96,17 @@ export const CreateTaskAction: React.FC<Props> = ({
 
   return (
     <>
-      <Fab className={cx(className, s.fab)} getTransform={getTransform}>
-        <div className={s.outer} {...getRootProps()}>
+      <Action className={className} getTransform={getTransform}>
+        <Fab
+          color="primary"
+          size="medium"
+          className={cx(s.outer, s.fab)}
+          {...(getRootProps() as any)}
+        >
           <CreateIcon className={s.icon} fontSize="small" />
           <input {...getInputProps()} />
-        </div>
-      </Fab>
+        </Fab>
+      </Action>
       <Drawer
         open={open}
         onClose={() => setOpen(false)}

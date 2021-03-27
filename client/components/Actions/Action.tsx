@@ -1,20 +1,19 @@
-import React, { useCallback } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { once } from 'ramda';
 import cx from 'clsx';
 
-import { Fab as FabBase } from '@material-ui/core';
 import { useSpring, animated } from 'react-spring';
 
 import { useContainerStyles } from './common';
 
 export type Props = {
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   getTransform?: (state: { hovered: boolean }) => any;
   className?: string;
   ref?: any;
 };
 
-const AnimatedFab = animated(FabBase);
+const AnimatedFab = animated.div;
 
 const defaultTransform = (state: { hovered: boolean }) => {
   if (state.hovered) {
@@ -28,7 +27,7 @@ const defaultTransform = (state: { hovered: boolean }) => {
   };
 };
 
-export const Fab: React.FC<Props> = (props) => {
+export const Action: React.FC<Props> = forwardRef((props, ref) => {
   const [hovered, setHovered] = React.useState<boolean>(false);
 
   const { getTransform = defaultTransform } = props;
@@ -49,16 +48,15 @@ export const Fab: React.FC<Props> = (props) => {
   return (
     <AnimatedFab
       style={fab}
-      color="primary"
-      size="medium"
       className={cx(classes.container, className)}
       onMouseOver={handleActive}
       onMouseOut={handleBlur}
       onFocus={handleActive}
       onBlur={handleBlur}
       onClick={onClick}
+      ref={ref as any}
     >
       {children as React.ReactElement}
     </AnimatedFab>
   );
-};
+});

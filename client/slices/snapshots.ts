@@ -23,10 +23,10 @@ const snapshots = createSlice({
       ...state,
       list: action.payload.snapshots,
     }),
-    setActive: (
+    setActiveSnapshot: (
       state: SnapshotsState,
       action: PayloadAction<{
-        snapshotId: number;
+        snapshotId?: number;
         tankerId?: number;
         stationId?: number;
       }>
@@ -39,5 +39,5 @@ const snapshots = createSlice({
   },
 });
 
-export const { setSnapshots, setActive } = snapshots.actions;
+export const { setSnapshots, setActiveSnapshot } = snapshots.actions;
 export default snapshots.reducer;

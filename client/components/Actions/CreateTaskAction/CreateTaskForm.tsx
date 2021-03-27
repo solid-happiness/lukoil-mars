@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
   input: {
     marginTop: theme.spacing(2),
     width: '300px',
+    [theme.breakpoints.down('sm')]: {
+      width: 'auto',
+    },
   },
 }));
 
@@ -75,7 +78,6 @@ export const CreateTaskForm: React.FC<Props> = ({ task, handleClose }) => {
                 ),
                 fields
               )}
-
               <Button
                 className={s.submit}
                 disabled={isSubmitting}

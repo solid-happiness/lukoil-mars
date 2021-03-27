@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   copyright: {
+    color: 'black',
     marginTop: theme.spacing(1),
     textAlign: 'center',
     [theme.breakpoints.down('sm')]: {
