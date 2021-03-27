@@ -72,7 +72,7 @@ export const CreateTaskForm: React.FC<Props> = ({ task, handleClose }) => {
                     value={values[field.name]}
                     onChange={handleChange}
                     label={field.title}
-                    disabled={!field.editableOnSnapshot && task.snapshotId}
+                    disabled={!!(!field.editableOnSnapshot && task.snapshotId)}
                     variant="outlined"
                     fullWidth
                   />
