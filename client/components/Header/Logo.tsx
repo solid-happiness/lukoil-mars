@@ -1,9 +1,8 @@
-import React, { useRef } from 'react';
-import { useMount } from 'react-use';
+import React, { useRef, useEffect } from 'react';
+import { useTheme, useMediaQuery, makeStyles } from '@material-ui/core';
 
 import cx from 'clsx';
 import tippy from 'tippy.js';
-import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -22,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       top: 10,
       left: 10,
+      zIndex: 99,
     },
   },
   box: {
@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
       background: 'linear-gradient(to right, #e3192d, #e94057, #f27121)',
       color: 'white',
       fontSize: '1.2rem',
+      zIndex: 99,
     },
   },
 }));
@@ -51,19 +52,22 @@ type Props = {
 export const Logo: React.FC<Props> = ({ className }) => {
   const s = useStyles();
   const root = useRef<HTMLLinkElement>();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useMount(() => {
+  useEffect(() => {
     const tooltip = tippy(root.current!, {
       placement: 'right',
       content: 'Лукойл на Марсе!',
       theme: 'logo',
       arrow: false,
       trigger: 'manual',
-      hideOnClick: false,
+      hideOnClick: isMobile,
     });
 
     tooltip.show();
-  });
+    return () => tooltip.destroy();
+  }, [isMobile]);
 
   return (
     <a ref={root as any} className={cx(s.link, className)} href="/">

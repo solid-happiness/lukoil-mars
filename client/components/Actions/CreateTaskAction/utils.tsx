@@ -11,13 +11,14 @@ import { makeRequest } from 'client/features/request';
 import { Task } from 'client/typings';
 import { getCSRFToken } from 'client/utils';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   alert: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    boxShadow: theme.shadows[1],
   },
-});
+}));
 
 type Params = {
   handleClose: () => void;
@@ -49,6 +50,7 @@ export const useHandleSubmit = (params: Params) => {
             message: (
               <Alert
                 severity="success"
+                variant="filled"
                 onClose={() => dispatch(hideSnackbar())}
               >
                 Задача успешно создана
@@ -67,6 +69,7 @@ export const useHandleSubmit = (params: Params) => {
               <Alert
                 className={s.alert}
                 severity="error"
+                variant="filled"
                 onClose={() => dispatch(hideSnackbar())}
               >
                 Не удалось создать задачу

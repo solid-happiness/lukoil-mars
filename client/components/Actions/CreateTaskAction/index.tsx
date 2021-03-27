@@ -41,6 +41,15 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(8),
     bottom: theme.spacing(8),
     height: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 'unset',
+      width: '90vw',
+      right: 0,
+      top: theme.spacing(2),
+      bottom: theme.spacing(0),
+      borderTopRightRadius: 0,
+      borderBottomLeftRadius: 0,
+    },
   },
 }));
 
