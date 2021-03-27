@@ -6,6 +6,7 @@
 
 /deploy/nginx.conf
 /deploy/*.service
+/.env
 
 /logs
 *.pyc
