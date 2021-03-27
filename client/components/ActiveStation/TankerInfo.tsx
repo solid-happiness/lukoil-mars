@@ -33,7 +33,9 @@ export const TankerInfo: React.FC<Props> = ({ tanker }) => {
         {tanker.location.latitude}, {tanker.location.longitude}
       </Row>
       <Row title="Запас топлива">{tanker.fuelAmount}</Row>
-      <Row title="Станция">{tanker.toFuelStation}</Row>
+      {!!tanker.toFuelStation && (
+        <Row title="Станция">{tanker.toFuelStation}</Row>
+      )}
     </div>
   );
 };

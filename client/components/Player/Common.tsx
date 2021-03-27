@@ -34,7 +34,7 @@ export const Common: React.FC<Props> = ({ bank, result, iteration }) => {
         <br>
         Итерация: ${iteration}
         <br>
-        Результат: ${result}₽
+        Результат: ${Math.round(result! * 100) / 100}₽
       `,
       theme: 'bank',
       arrow: false,
@@ -43,7 +43,7 @@ export const Common: React.FC<Props> = ({ bank, result, iteration }) => {
 
   return (
     <Typography className={s.root} ref={bankRef} variant="body1">
-      {bank}₽
+      {Math.round(bank * 100) / 100}₽
     </Typography>
   );
 };
