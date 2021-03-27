@@ -1,9 +1,10 @@
 {
+  "fuelSupplies": [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
   "storageAmountFuel": 100000,
   "stationAmountFuel": 25000,
   "stationsCount": 3,
   "tankersCount": 5,
-  "monthTimestampCount": 3000,
+  "monthTimestampCount": 3,
   "tankerCost": 15000000,
   "fuelDeliveryTime": 1000,
   "carRefuelingTime": 1,

@@ -124,7 +124,8 @@ def make_snapshot(snapshot):
     def build_column(station):
         '''Строим колонку на АЗС'''
         station.columns.append(
-            api_models.FuelColumn(busy_to=timestamp + config.column_building_time)
+            api_models.FuelColumn(busy_to=timestamp +
+                                  config.column_building_time)
         )
         # Нанимаем заправщика
         station.employees.append(api_models.Employee(
@@ -292,8 +293,7 @@ def make_snapshot(snapshot):
         if can_to_delivery_tanker(station):
             delivery_tanker(station)
 
-    if can_to_build_station() or True:
-        print('build')
+    if can_to_build_station():
         build_station()
 
     return snapshot

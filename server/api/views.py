@@ -40,7 +40,7 @@ def create_emulation(request):
     '''
     data = json.loads(request.body.decode('utf-8'))
     result = Emulation.create(data)
-    
+
     return JsonResponse({
-        'shapshots': result,
+        'snapshots': result,
     })
