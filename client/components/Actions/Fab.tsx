@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { once } from 'ramda';
 import cx from 'clsx';
 
@@ -28,7 +28,7 @@ const defaultTransform = (state: { hovered: boolean }) => {
   };
 };
 
-export const Fab: React.FC<Props> = (props) => {
+export const Fab: React.FC<Props> = forwardRef((props, ref) => {
   const [hovered, setHovered] = React.useState<boolean>(false);
 
   const { getTransform = defaultTransform } = props;
@@ -57,8 +57,9 @@ export const Fab: React.FC<Props> = (props) => {
       onFocus={handleActive}
       onBlur={handleBlur}
       onClick={onClick}
+      ref={ref as any}
     >
       {children as React.ReactElement}
     </AnimatedFab>
   );
-};
+});

@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[1],
     marginRight: theme.spacing(4),
     minWidth: '350px',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 'unset',
+    },
   },
 }));
 
@@ -33,17 +36,15 @@ export const InfoAction: React.FC<Props> = ({
   const s = useStyles();
 
   return (
-    <>
-      <Fab className={cx(className, s.fab)} getTransform={getTransform}>
-        <Tooltip
-          classes={{ tooltip: s.tooltip }}
-          title={<Team />}
-          placement="left"
-          interactive
-        >
-          <InfoIcon fontSize="small" />
-        </Tooltip>
-      </Fab>
-    </>
+    <Fab className={cx(className, s.fab)} getTransform={getTransform}>
+      <Tooltip
+        classes={{ tooltip: s.tooltip }}
+        title={<Team />}
+        placement="left"
+        interactive
+      >
+        <InfoIcon fontSize="small" />
+      </Tooltip>
+    </Fab>
   );
 };
