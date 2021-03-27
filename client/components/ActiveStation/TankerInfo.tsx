@@ -2,10 +2,11 @@ import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 
 import { Tanker } from 'client/typings';
+import { Row } from './Row';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: '300px',
+    width: '300px',
     margin: `${theme.spacing(4)}px ${theme.spacing(4)}px`,
   },
   title: {
@@ -25,7 +26,14 @@ export const TankerInfo: React.FC<Props> = ({ tanker }) => {
 
   return (
     <div className={s.root}>
-      <Typography variant="h6">{tanker.fuelAmount}</Typography>
+      <Typography variant="h6" className={s.title}>
+        Танкер №{tanker.id}
+      </Typography>
+      <Row title="Координаты" gutter>
+        {tanker.location.latitude}, {tanker.location.longitude}
+      </Row>
+      <Row title="Запас топлива">{tanker.fuelAmount}</Row>
+      <Row title="Станция">{tanker.toFuelStation}</Row>
     </div>
   );
 };
