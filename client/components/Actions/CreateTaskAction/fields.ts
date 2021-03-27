@@ -3,9 +3,15 @@ import { Task } from 'client/typings';
 type Field = {
   name: keyof Task;
   title: string;
+  editableOnSnapshot?: boolean;
 };
 
 export const fields: Field[] = [
+  {
+    name: 'fuelSupplies',
+    title: 'Распределение топлива по месяцам',
+    editableOnSnapshot: true,
+  },
   {
     name: 'storageAmountFuel',
     title: 'Остаток топлива в хранилище',

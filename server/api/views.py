@@ -42,5 +42,8 @@ def create_emulation(request):
     result = Emulation.create(data)
 
     return JsonResponse({
-        'snapshots': result,
+        'emulate': {
+            'id': 1,
+            'snapshots': result,
+        }
     })

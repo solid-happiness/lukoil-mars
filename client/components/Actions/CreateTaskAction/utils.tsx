@@ -11,6 +11,7 @@ import {
   hideSnackbar,
   setSnapshots,
   setActiveSnapshot,
+  setTask,
 } from 'client/slices';
 import { makeRequest } from 'client/features/request';
 
@@ -38,19 +39,22 @@ export const useHandleSubmit = (params: Params) => {
   const handleSubmit = useCallback(
     async (values: Task, actions: FormikHelpers<Task>) => {
       try {
-        const { data } = await makeRequest.post<{ snapshots: Snapshot[] }>(
-          '/api/emulate/',
-          JSON.stringify(values),
-          {
-            headers: {
-              'X-CSRFToken': await getCSRFToken(),
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await makeRequest.post<{
+          emulate: { id: number; snapshots: Snapshot[] };
+        }>('/api/emulate/', JSON.stringify(values), {
+          headers: {
+            'X-CSRFToken': await getCSRFToken(),
+            'Content-Type': 'application/json',
+          },
+        });
 
-        dispatch(setSnapshots({ snapshots: data.snapshots }));
-        dispatch(setActiveSnapshot({ snapshotId: head(data.snapshots)?.id }));
+        const { emulate } = response.data;
+
+        dispatch(setTask({ task: { ...values, emulateId: emulate.id } }));
+        dispatch(setSnapshots({ snapshots: emulate.snapshots }));
+        dispatch(
+          setActiveSnapshot({ snapshotId: head(emulate.snapshots)?.id })
+        );
 
         dispatch(
           showSnackbar({

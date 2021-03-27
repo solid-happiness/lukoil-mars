@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { head } from 'ramda';
 import { makeStyles, Fab, Drawer } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
@@ -7,7 +8,10 @@ import cx from 'clsx';
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Action, Props as ActionProps } from 'client/components/Actions/Action';
 
+import { setTask, showTaskForm, hideTaskForm } from 'client/slices';
+import { getTask, isTaskFormVisible } from 'client/selectors';
 import { Task } from 'client/typings';
+
 import { CreateTaskForm } from './CreateTaskForm';
 
 const useStyles = makeStyles((theme) => ({
@@ -65,8 +69,7 @@ export const CreateTaskAction: React.FC<Props> = ({
   onClose,
 }) => {
   const s = useStyles();
-  const [open, setOpen] = useState(false);
-  const [task, setTask] = useState<Task>();
+  const dispatch = useDispatch();
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (files: File[]) => {
@@ -82,10 +85,10 @@ export const CreateTaskAction: React.FC<Props> = ({
           return;
         }
 
-        const task = JSON.parse(String(content));
+        const task: Task = JSON.parse(String(content));
 
-        setOpen(true);
-        setTask(task);
+        dispatch(showTaskForm());
+        dispatch(setTask({ task }));
 
         onClose();
       });
@@ -93,6 +96,9 @@ export const CreateTaskAction: React.FC<Props> = ({
       reader.readAsText(configFile);
     },
   });
+
+  const task = useSelector(getTask);
+  const formVisible = useSelector(isTaskFormVisible);
 
   return (
     <>
@@ -108,8 +114,8 @@ export const CreateTaskAction: React.FC<Props> = ({
         </Fab>
       </Action>
       <Drawer
-        open={open}
-        onClose={() => setOpen(false)}
+        open={formVisible}
+        onClose={() => dispatch(hideTaskForm())}
         classes={{
           paper: s.drawer,
         }}
@@ -118,10 +124,7 @@ export const CreateTaskAction: React.FC<Props> = ({
       >
         <CreateTaskForm
           task={task}
-          handleClose={() => {
-            setOpen(false);
-            setTask(undefined);
-          }}
+          handleClose={() => dispatch(hideTaskForm())}
         />
       </Drawer>
     </>

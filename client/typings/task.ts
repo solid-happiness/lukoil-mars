@@ -1,4 +1,7 @@
 export type Task = {
+  emulateId?: number;
+  snapshotId?: number;
+  fuelSupplies: string;
   storageAmountFuel: number;
   stationAmountFuel: number;
   stationsCount: number;

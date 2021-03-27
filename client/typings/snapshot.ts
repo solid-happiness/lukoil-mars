@@ -5,4 +5,5 @@ export type Snapshot = {
   id: number;
   fuelStations: FuelStation[];
   tankers: Tanker[];
+  bank: number;
 };

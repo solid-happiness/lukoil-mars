@@ -4,17 +4,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty, findIndex } from 'ramda';
 import { CODE_LEFT, CODE_RIGHT } from 'keycode-js';
 
-import { makeStyles, IconButton } from '@material-ui/core';
+import { makeStyles, IconButton, Typography, Tooltip } from '@material-ui/core';
 import {
   NavigateBefore as NavigateBeforeIcon,
   SkipNext as SkipNextIcon,
   NavigateNext as NavigateNextIcon,
   HighlightOff as HighlightOffIcon,
+  Edit as EditIcon,
   Pause as PauseIcon,
 } from '@material-ui/icons';
 
-import { setSnapshots, setActiveSnapshot } from 'client/slices';
-import { getSnapshots, getActiveSnapshot } from 'client/selectors';
+import {
+  showTaskForm,
+  setSnapshots,
+  setActiveSnapshot,
+  setTask,
+} from 'client/slices';
+import { getTask, getSnapshots, getActiveSnapshot } from 'client/selectors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,12 +45,16 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     margin: `${theme.spacing(1 / 2)}px ${theme.spacing(4)}px`,
   },
+  tooltip: {
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
+  },
 }));
 
 export const Player: React.FC = () => {
   const s = useStyles();
   const [playFast, setPlayFast] = useState(false);
   const dispatch = useDispatch();
+
   const activeSnapshot = useSelector(getActiveSnapshot);
   const snapshots = useSelector(getSnapshots);
 
@@ -94,6 +104,8 @@ export const Player: React.FC = () => {
     return () => clearInterval(interval);
   }, [idxLatest, dispatch, snapshots, playFast]);
 
+  const task = useSelector(getTask);
+
   if (isEmpty(snapshots)) {
     return null;
   }
@@ -122,6 +134,30 @@ export const Player: React.FC = () => {
         >
           {playFast ? <PauseIcon /> : <SkipNextIcon />}
         </IconButton>
+        {activeSnapshot && task && (
+          <IconButton
+            onClick={() => {
+              dispatch(
+                setTask({ task: { ...task, snapshotId: activeSnapshot.id } })
+              );
+              dispatch(showTaskForm());
+            }}
+            color="primary"
+          >
+            <EditIcon />
+          </IconButton>
+        )}
+        {!!activeSnapshot?.bank && (
+          <Tooltip
+            title={
+              <Typography className={s.tooltip} variant="body1">
+                Текущий банк
+              </Typography>
+            }
+          >
+            <Typography variant="body1">{activeSnapshot?.bank}₽</Typography>
+          </Tooltip>
+        )}
         <IconButton
           onClick={() => {
             dispatch(setActiveSnapshot({}));
