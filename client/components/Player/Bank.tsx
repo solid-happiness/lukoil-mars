@@ -15,19 +15,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Bank: React.FC<{ bank: number }> = ({ bank }) => {
+export const Bank: React.FC<{ bank: number; result?: number }> = ({
+  bank,
+  result,
+}) => {
   const s = useStyles();
   const bankRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const tooltip = tippy(bankRef.current!, {
       placement: 'right',
-      content: 'Текущий банк',
+      allowHTML: true,
+      content: `
+        Текущий банк
+        <br>
+        Результат: ${result}₽
+      `,
       theme: 'bank',
       arrow: false,
     });
 
     return () => tooltip.destroy();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

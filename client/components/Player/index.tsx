@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useKey, useLatest } from 'react-use';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty, findIndex } from 'ramda';
+import { isEmpty, findIndex, last } from 'ramda';
 import { CODE_LEFT, CODE_RIGHT } from 'keycode-js';
 
 import { makeStyles, IconButton } from '@material-ui/core';
@@ -149,7 +149,9 @@ export const Player: React.FC = () => {
             <EditIcon />
           </IconButton>
         )}
-        {!!activeSnapshot?.bank && <Bank bank={activeSnapshot?.bank} />}
+        {!!activeSnapshot?.bank && (
+          <Bank bank={activeSnapshot?.bank} result={last(snapshots)?.bank} />
+        )}
         <IconButton
           onClick={() => {
             dispatch(setActiveSnapshot({}));
