@@ -54,7 +54,8 @@ class Tanker:
         return {
             'location': self.location.to_dict(),
             'deliveryTo': self.delivery_to,
-            'fuelAmount': self.fuel_amount
+            'fuelAmount': self.fuel_amount,
+            'busyTo': self.busy_to,
         }
 
 
@@ -98,15 +99,13 @@ class FuelStation:
 
 class Snapshot:
     timestamp: int
-    config: EmulationConfig
     bank: int
     fuel_storage_amount: int
     fuel_stations: List[FuelStation]
     tankers: List[Tanker]
 
-    def __init__(self, timestamp=None, config=None, bank=None, fuel_storage_amount=None, fuel_stations=None, tankers=None) -> None:
+    def __init__(self, timestamp=None, bank=None, fuel_storage_amount=None, fuel_stations=None, tankers=None) -> None:
         self.timestamp = timestamp
-        self.config = config
         self.bank = bank
         self.fuel_storage_amount = fuel_storage_amount
         self.fuel_stations = fuel_stations
@@ -115,6 +114,7 @@ class Snapshot:
     def to_dict(self):
         return {
             'id': self.timestamp,
+            'timestamp': self.timestamp,
             'bank': self.bank,
             'fuelStorageAmount': self.fuel_storage_amount,
             'fuelStations': [
@@ -128,6 +128,63 @@ class Snapshot:
                 in self.tankers
             ],
         }
+
+
+    @classmethod
+    def from_dict(cls, params):
+        new_snapshot = cls()
+        new_snapshot.timestamp = params.get('timestamp')
+        new_snapshot.bank = params.get('bank')
+        new_snapshot.fuel_storage_amount = params.get('fuelStorageAmount')
+        new_snapshot.tankers = []
+        for tanker in params.get('tankers'):
+            new_snapshot.tankers.append(
+                Tanker(
+                    location=Location(
+                        tanker.get('location').get('latitude'),
+                        tanker.get('location').get('longitude'),
+                    ),
+                    delivery_to=tanker.get('deliveryTo'),
+                    fuel_amount=tanker.get('fuelAmount'),
+                    busy_to=tanker.get('busyTo'),
+                )
+            )
+        new_snapshot.fuel_stations = []
+        for station in params.get('fuelStations'):
+            new_snapshot.fuel_stations.append(
+                FuelStation(
+                    id=station.get('id'),
+                    fuel_amount=station.get('fuelAmount'),
+                    location=Location(
+                        station.get('location').get('latitude'),
+                        station.get('location').get('longitude'),
+                    ),
+                    columns= station.get('columns') and [
+                        FuelColumn()
+                        for _
+                        in station.get('columns')
+                    ] or [],
+                    busy_to=0,
+                    employees=[
+                        Employee(
+                            role='director',
+                            dismissal_probability=0,
+                            contract='tk',
+                        ),
+                        Employee(
+                            role='cashier',
+                            dismissal_probability=0,
+                            contract='tk',
+                        ),
+                        Employee(
+                            role='security',
+                            dismissal_probability=0,
+                            contract='tk',
+                        ),
+                    ]
+                )
+            )
+        return new_snapshot
 
 
 class EmulationConfig(models.Model):
@@ -196,17 +253,18 @@ class Emulation(models.Model):
         EmulationConfig,
         on_delete=models.PROTECT,
     )
+    snapshots = models.JSONField()
 
     @classmethod
     def create(cls, params: dict) -> dict:
         # Настройки, которые не будут сохранены
+        config = EmulationConfig.from_dict(params)
         storage_amount_fuel = params.get('storageAmountFuel')
         station_amount_fuel = params.get('stationAmountFuel')
         stations_count = params.get('stationsCount')
         tankers_count = params.get('tankersCount')
         start_snapshot = Snapshot()
         start_snapshot.timestamp = 1
-        start_snapshot.config = EmulationConfig.from_dict(params)
         start_snapshot.bank = 0
         start_snapshot.fuel_storage_amount = storage_amount_fuel
 
@@ -226,7 +284,7 @@ class Emulation(models.Model):
                 FuelStation(
                     id=i+1,
                     fuel_amount=station_amount_fuel,
-                    location=Location(55, 38),
+                    location=desicionmaking.get_new_location(),
                     columns=[],
                     busy_to=0,
                     employees=[
@@ -255,8 +313,27 @@ class Emulation(models.Model):
 
         for i in range(int(params.get('monthTimestampCount')) * 12):
             result.append(desicionmaking.make_snapshot(
-                start_snapshot).to_dict())
+                start_snapshot, config).to_dict())
             start_snapshot.timestamp += 1
-        print(result)
+        emulate = cls.objects.create(
+            config=config,
+            snapshots=result,
+        )
+        return emulate.id, result
 
-        return result
+    @classmethod
+    def recalculate(cls, emulate_id, snapshot_id, fuel_supplies):
+        emulation = cls.objects.get(id=emulate_id)
+        config = emulation.config
+        config.fuel_supplies = fuel_supplies
+        config.save()
+        snapshots = emulation.snapshots
+        for i in range(config.month_timestamp_count * 12):
+            if i == snapshot_id:
+                snapshot = Snapshot.from_dict(snapshots[i-1])
+        for i in range(snapshot_id, config.month_timestamp_count * 12):
+            snapshots[i] = desicionmaking.make_snapshot(snapshot, config).to_dict()
+            snapshots[i-1]['timestamp'] += 1
+        emulation.timestamps = snapshots
+        emulation.save()
+        return emulate_id, snapshots

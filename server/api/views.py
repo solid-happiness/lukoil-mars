@@ -39,11 +39,18 @@ def create_emulation(request):
         dismissalProbability - вероятность увольнения сотрудника, устроенного по ГПХ
     '''
     data = json.loads(request.body.decode('utf-8'))
-    result = Emulation.create(data)
+    if data.get('emulateId'):
+        id, result = Emulation.recalculate(
+            emulate_id=data.get('emulateId'),
+            snapshot_id=data.get('snapshotId'),
+            fuel_supplies=data.get('fuelSupplies'),
+        )
+    else:
+        id, result = Emulation.create(data)
 
     return JsonResponse({
         'emulate': {
-            'id': 1,
+            'id': id,
             'snapshots': result,
         }
     })

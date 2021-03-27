@@ -19,6 +19,17 @@ MAP_CENTER = (
     (MAP_COORDS['bottom_y'] + MAP_COORDS['top_y']) / 2,
 )
 
+def get_new_location():
+    return api_models.Location(
+        latitude=uniform(
+            MAP_COORDS['left_x'],
+            MAP_COORDS['right_x']
+        ),
+        longitude=uniform(
+            MAP_COORDS['bottom_y'],
+            MAP_COORDS['top_y']
+        ),
+    )
 
 def get_fuel_station_by_id(fuel_stations, id_to_find):
     '''Получаем индекс заправки в списке заправок по ее id'''
@@ -28,10 +39,8 @@ def get_fuel_station_by_id(fuel_stations, id_to_find):
     return None
 
 
-def make_snapshot(snapshot):
+def make_snapshot(snapshot, config):
     '''Метод принятия решений'''
-
-    config = snapshot.config
     timestamp = snapshot.timestamp
     month_timestamp_count = config.month_timestamp_count
 
@@ -207,18 +216,6 @@ def make_snapshot(snapshot):
             timestamp + config.station_building_time <= year,
         )
         return all(conditions)
-
-    def get_new_location():
-        return api_models.Location(
-            latitude=uniform(
-                MAP_COORDS['left_x'],
-                MAP_COORDS['right_x']
-            ),
-            longitude=uniform(
-                MAP_COORDS['bottom_y'],
-                MAP_COORDS['top_y']
-            ),
-        )
 
     def build_station():
         snapshot.fuel_stations.append(api_models.FuelStation(
