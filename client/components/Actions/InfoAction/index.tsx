@@ -1,10 +1,9 @@
 import React from 'react';
-import cx from 'clsx';
 
-import { makeStyles, Tooltip } from '@material-ui/core';
+import { makeStyles, Tooltip, Fab } from '@material-ui/core';
 import { Info as InfoIcon } from '@material-ui/icons';
 
-import { Fab, Props as FabProps } from 'client/components/Actions/Fab';
+import { Action, Props as ActionProps } from 'client/components/Actions/Action';
 import { Team } from './Team';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   className?: string;
-  getTransform?: FabProps['getTransform'];
+  getTransform?: ActionProps['getTransform'];
 };
 
 export const InfoAction: React.FC<Props> = ({
@@ -36,15 +35,17 @@ export const InfoAction: React.FC<Props> = ({
   const s = useStyles();
 
   return (
-    <Fab className={cx(className, s.fab)} getTransform={getTransform}>
+    <Action className={className} getTransform={getTransform}>
       <Tooltip
         classes={{ tooltip: s.tooltip }}
         title={<Team />}
         placement="left"
         interactive
       >
-        <InfoIcon fontSize="small" />
+        <Fab color="primary" size="medium" className={s.fab}>
+          <InfoIcon fontSize="small" />
+        </Fab>
       </Tooltip>
-    </Fab>
+    </Action>
   );
 };
