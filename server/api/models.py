@@ -246,7 +246,10 @@ class EmulationConfig(models.Model):
     @classmethod
     def from_dict(cls, params: dict) -> EmulationConfig:
         return cls.objects.create(
-            fuel_supplies=list(map(int, params.get('fuelSupplies'))),
+            fuel_supplies=list(map(
+                int,
+                params.get('fuelSupplies').split(',')
+            )),
             month_timestamp_count=int(params.get('monthTimestampCount')),
             tanker_cost=int(params.get('tankerCost')),
             fuel_delivery_time=int(params.get('fuelDeliveryTime')),
