@@ -335,6 +335,12 @@ class Emulation(models.Model):
             )
             result.append(new_snapshot.to_dict())
             new_snapshot.timestamp += 1
+        
+        emulate = cls.objects.create(
+            config=config,
+            snapshots=result,
+        )
+        return emulate.id, result
 
     @classmethod
     def recalculate(cls, emulate_id, snapshot_id, fuel_supplies):
