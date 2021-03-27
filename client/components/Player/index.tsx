@@ -6,7 +6,6 @@ import { CODE_LEFT, CODE_RIGHT } from 'keycode-js';
 
 import { makeStyles, IconButton } from '@material-ui/core';
 import {
-  PlayCircleFilled as PlayCircleFilledIcon,
   NavigateBefore as NavigateBeforeIcon,
   SkipNext as SkipNextIcon,
   NavigateNext as NavigateNextIcon,
@@ -58,7 +57,6 @@ export const Player: React.FC = () => {
 
   const canPressNext = idx < snapshots?.length - 1;
   const canPressPrev = idx > 0;
-  const canStart = idx === -1;
 
   const handlePrev = useCallback(() => {
     if (canPressPrev) {
@@ -92,7 +90,7 @@ export const Player: React.FC = () => {
       } else {
         setPlayFast(false);
       }
-    }, 100);
+    }, 200);
     return () => clearInterval(interval);
   }, [idxLatest, dispatch, snapshots, playFast]);
 
@@ -109,15 +107,6 @@ export const Player: React.FC = () => {
           disabled={!canPressPrev}
         >
           <NavigateBeforeIcon />
-        </IconButton>
-        <IconButton
-          color="primary"
-          onClick={() =>
-            dispatch(setActiveSnapshot({ snapshotId: snapshots[idx + 1]?.id }))
-          }
-          disabled={!canStart}
-        >
-          <PlayCircleFilledIcon />
         </IconButton>
         <IconButton
           onClick={handleNext}

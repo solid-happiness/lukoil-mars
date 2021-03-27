@@ -78,7 +78,6 @@ export const CreateTaskForm: React.FC<Props> = ({ task, handleClose }) => {
                 ),
                 fields
               )}
-
               <Button
                 className={s.submit}
                 disabled={isSubmitting}

@@ -1,14 +1,20 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { FormikHelpers } from 'formik';
+import { head } from 'ramda';
 
 import { makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
-import { showSnackbar, hideSnackbar, setSnapshots } from 'client/slices';
+import {
+  showSnackbar,
+  hideSnackbar,
+  setSnapshots,
+  setActiveSnapshot,
+} from 'client/slices';
 import { makeRequest } from 'client/features/request';
 
-import { Task } from 'client/typings';
+import { Snapshot, Task } from 'client/typings';
 import { getCSRFToken } from 'client/utils';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,7 +38,7 @@ export const useHandleSubmit = (params: Params) => {
   const handleSubmit = useCallback(
     async (values: Task, actions: FormikHelpers<Task>) => {
       try {
-        const { data } = await makeRequest.post<{ snapshots: [] }>(
+        const { data } = await makeRequest.post<{ snapshots: Snapshot[] }>(
           '/api/emulate/',
           JSON.stringify(values),
           {
@@ -44,6 +50,7 @@ export const useHandleSubmit = (params: Params) => {
         );
 
         dispatch(setSnapshots({ snapshots: data.snapshots }));
+        dispatch(setActiveSnapshot({ snapshotId: head(data.snapshots)?.id }));
 
         dispatch(
           showSnackbar({
@@ -53,7 +60,7 @@ export const useHandleSubmit = (params: Params) => {
                 variant="filled"
                 onClose={() => dispatch(hideSnackbar())}
               >
-                Задача успешно создана
+                Задача успешно решена!
               </Alert>
             ),
             type: 'alert',

@@ -13,6 +13,7 @@ import { Add as AddIcon } from '@material-ui/icons';
 
 import { CreateTaskAction } from './CreateTaskAction';
 import { InfoAction } from './InfoAction';
+import { IntroAction } from './IntroAction';
 
 import { useContainerStyles, useFadeTransition } from './common';
 import { ReducerActionsState, ReducerAction, ReducerActionType } from './types';
@@ -120,13 +121,18 @@ export const Actions: React.FC = () => {
   const commonClasses = useContainerStyles(state);
   const classes = useStyles(state);
 
-  const getInfoActionTransform = useFadeTransition({
+  const getIntroTransform = useFadeTransition({
     index: 1,
     open: state.open,
   });
 
-  const getCreateTaskActionTransform = useFadeTransition({
+  const getInfoActionTransform = useFadeTransition({
     index: 2,
+    open: state.open,
+  });
+
+  const getCreateTaskActionTransform = useFadeTransition({
+    index: 3,
     open: state.open,
   });
 
@@ -152,6 +158,10 @@ export const Actions: React.FC = () => {
         >
           <AddIcon fontSize="small" />
         </Fab>
+        <IntroAction
+          className={commonClasses.open}
+          getTransform={getIntroTransform}
+        />
         <InfoAction
           className={commonClasses.open}
           getTransform={getInfoActionTransform}
