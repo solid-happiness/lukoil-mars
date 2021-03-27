@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 
 import { setActiveSnapshot } from 'client/slices';
-import { getActiveStation, getActiveTanker } from 'client/selectors';
+import {
+  getActiveSnapshot,
+  getActiveStation,
+  getActiveTanker,
+} from 'client/selectors';
 
 import { StationInfo } from './StationInfo';
 import { TankerInfo } from './TankerInfo';
@@ -27,13 +31,14 @@ export const ActiveStation: React.FC = () => {
   const s = useStyles();
   const dispatch = useDispatch();
 
+  const snapshot = useSelector(getActiveSnapshot);
   const activeStation = useSelector(getActiveStation);
   const activeTanker = useSelector(getActiveTanker);
 
   return (
     <Drawer
       open={!!(activeStation || activeTanker)}
-      onClose={() => dispatch(setActiveSnapshot({}))}
+      onClose={() => dispatch(setActiveSnapshot({ snapshotId: snapshot?.id }))}
       classes={{
         paper: s.drawer,
       }}

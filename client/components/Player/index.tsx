@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useKey } from 'react-use';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty, findIndex } from 'ramda';
+import { CODE_LEFT, CODE_RIGHT } from 'keycode-js';
 
 import { makeStyles, IconButton } from '@material-ui/core';
 import {
@@ -44,6 +46,25 @@ export const Player: React.FC = () => {
     snapshots || []
   );
 
+  const canPressNext = idx < snapshots?.length - 1;
+  const canPressPrev = idx > 0;
+  const canStart = idx === -1;
+
+  const handlePrev = useCallback(() => {
+    if (canPressPrev) {
+      dispatch(setActiveSnapshot({ snapshotId: snapshots[idx - 1]?.id }));
+    }
+  }, [idx, canPressPrev, snapshots, dispatch]);
+
+  const handleNext = useCallback(() => {
+    if (canPressNext) {
+      dispatch(setActiveSnapshot({ snapshotId: snapshots[idx + 1]?.id }));
+    }
+  }, [idx, canPressNext, snapshots, dispatch]);
+
+  useKey(CODE_LEFT, handlePrev, {}, [idx]);
+  useKey(CODE_RIGHT, handleNext, {}, [idx]);
+
   if (isEmpty(snapshots)) {
     return null;
   }
@@ -52,10 +73,9 @@ export const Player: React.FC = () => {
     <section className={s.root}>
       <div className={s.controls}>
         <IconButton
-          onClick={() =>
-            dispatch(setActiveSnapshot({ snapshotId: snapshots[idx - 1]?.id }))
-          }
+          onClick={handlePrev}
           color="primary"
+          disabled={!canPressPrev}
         >
           <SkipPreviousIcon />
         </IconButton>
@@ -64,14 +84,14 @@ export const Player: React.FC = () => {
           onClick={() =>
             dispatch(setActiveSnapshot({ snapshotId: snapshots[idx + 1]?.id }))
           }
+          disabled={!canStart}
         >
           <PlayCircleFilledIcon />
         </IconButton>
         <IconButton
-          onClick={() =>
-            dispatch(setActiveSnapshot({ snapshotId: snapshots[idx + 1]?.id }))
-          }
+          onClick={handleNext}
           color="primary"
+          disabled={!canPressNext}
         >
           <SkipNextIcon />
         </IconButton>
