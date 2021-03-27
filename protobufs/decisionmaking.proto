@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package store;
+
+service Decisionmaking {
+    rpc MakeSnapshot(Snapshot) returns (Snapshot) {};
+}
+
+message Config {
+    repeated int32 fuelSupplies = 1;
+    int32 monthTimestampCount = 2;
+    int32 tankerCost = 3;
+    int32 fuelDeliveryTime = 4;
+    int32 carRefuelingTime = 5;
+    int32 baseAvgReceipt = 6;
+    float receiptAvgCoef = 7;
+    int32 maintenanceStationCost = 8;
+    int32 maintenanceColumnCost = 9;
+    int32 stationBuildingTime = 10;
+    int32 columnBuildingTime = 11;
+    int32 directorSalary = 12;
+    int32 refuillerSalary = 13;
+    int32 cashierSalary = 14;
+    int32 securitySalary = 15;
+    int32 needAdditionalCashierColumnCount = 16;
+    float dismissalProbability = 17;
+}
+
+message Employee {
+    string role = 1;
+    float dismissalProbability = 2;
+    string contact = 3;
+}
+
+message FuelColumn{
+    int32 busy_to = 1;
+}
+
+message Location{
+    float latitude = 1;
+    float longitude = 2;
+}
+
+message FuelStation{
+    int32 fuel_amount = 1;
+    Location location = 2;
+    repeated FuelColumn columns = 3;
+    int32 busy_to = 4;
+    repeated Employee employees = 5;
+    int32 id = 6;
+}
+
+message Tanker{
+    Location location = 1;
+    int32 delivery_to = 2;
+    int32 fuel_amount = 3;
+    int32 busy_to = 4;
+}
+
+message Snapshot{
+    int32 timestamp = 1;
+    Config config = 2;
+    int32 bank = 3;
+    int32 fuelStorageAmount = 4;
+    repeated FuelStation fuelStations = 5;
+    repeated Tanker tankers = 6;
+}

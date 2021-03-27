@@ -1,9 +1,13 @@
 asgiref==3.3.1
 autopep8==1.5.6
 Django==3.1.7
+grpcio==1.36.1
+grpcio-tools==1.36.1
+protobuf==3.15.6
 pycodestyle==2.7.0
 python-dotenv==0.15.0
 pytz==2021.1
+six==1.15.0
 sqlparse==0.4.1
 uWSGI==2.0.19.1
 toml==0.10.2
