@@ -6,14 +6,14 @@
 
 - [React](https://reactjs.org/) &mdash; современная JS-библиотека для разработки пользовательских интерфейсов.
 - [Material-UI](https://material-ui.com/) &mdash; React UI фреймворк для воплощения [Material Design](https://material.io/).
-- [Flask](https://flask.palletsprojects.com/en/1.1.x/) &mdash; фреймворк для создания веб-приложений на языке программирования Python.
+- [Django](https://www.djangoproject.com/) &mdash; фреймворк для веб-приложений на Python, предалагющий хорошую админку из коробки, ORM и реализующий MVC.
 
 ## Запуск локальной версии проекта
 
 #### 1. Склонировать репозиторий
 
 ```bash
-$ git clone https://github.com/solid-happiness/stylish-cow.git
+$ git clone https://github.com/solid-happiness/lukoil-mars.git
 ```
 
 #### 2. Создать и запустить виртуальное окружение
@@ -30,7 +30,13 @@ $ pip install -r requirements.txt
 $ npm run bootstrap
 ```
 
-#### 4. Запустить проект
+#### 4. Выполнить миграции
+
+```bash
+$ python server/manage.py migrate
+```
+
+#### 5. Запустить проект
 
 В первой консоли запустить сборку клиентской части:
 
@@ -38,11 +44,10 @@ $ npm run bootstrap
 $ npm run dev
 ```
 
-Во второй консоли запустить flask-сервер:
+Во второй консоли запустить django-сервер:
 
 ```bash
-$ cd server/
-$ flask run
+$ python server/manage.py runserver
 ```
 
 В браузере перейти на `localhost:3000`.
