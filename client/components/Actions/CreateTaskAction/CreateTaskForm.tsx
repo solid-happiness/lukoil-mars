@@ -1,17 +1,10 @@
 import React from 'react';
 import { map } from 'ramda';
-import {
-  makeStyles,
-  TextField,
-  Button,
-  Typography,
-  CircularProgress,
-} from '@material-ui/core';
-
+import { makeStyles, TextField, Typography } from '@material-ui/core';
 import { Formik, FormikProps } from 'formik';
 
 import { Task } from 'client/typings';
-
+import { Submit } from './Submit';
 import { fields } from './fields';
 import { useHandleSubmit } from './utils';
 
@@ -26,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     margin: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
-  },
-  submit: {
-    marginTop: theme.spacing(4),
   },
   input: {
     marginTop: theme.spacing(2),
@@ -79,19 +69,7 @@ export const CreateTaskForm: React.FC<Props> = ({ task, handleClose }) => {
                 ),
                 fields
               )}
-              <Button
-                className={s.submit}
-                disabled={isSubmitting}
-                type="submit"
-                variant="outlined"
-                color="primary"
-              >
-                {isSubmitting ? (
-                  <CircularProgress size={25} />
-                ) : (
-                  'Создать задачу'
-                )}
-              </Button>
+              <Submit task={task} isSubmitting={isSubmitting} />
             </form>
           );
         }}
