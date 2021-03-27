@@ -1,11 +1,10 @@
-from random import random, uniform, randrange
+from random import random, randrange, uniform
 
 from api import models as api_models
 
-
 AVG_RECEIPT_FUEL = 15  # Среднее количество топлива за одну заправку
 MAX_COLUMNS_ON_STATION = 8  # Максимальное количество колонок на АЗС
-MAX_STATIONS = 100  # Максимальное число АЗС
+MAX_STATIONS = 10  # Максимальное число АЗС
 
 MAP_COORDS = {
     'left_x': 56.26077286,
@@ -244,7 +243,9 @@ def make_snapshot(snapshot, config):
                     role='security',
                     contract='td'
                 ),
-            ]
+            ],
+            actions=[],
+            state='building',
         ))
         build_column(snapshot.fuel_stations[-1])
 
@@ -296,6 +297,8 @@ def make_snapshot(snapshot, config):
             # Если можем построить еще колонку на этой АЗС, то строим
             if can_to_build_column(station):
                 build_column(station)
+
+            station.state = 'ready'
 
         if can_to_delivery_tanker(station):
             delivery_tanker(station)

@@ -45,8 +45,8 @@ export const StationInfo: React.FC<Props> = ({ station }) => {
       <Row title="Последние события">{join(', ', station.actions)}</Row>
       <Row title="Кол-во директоров">{station.employees.directors}</Row>
       <Row title="Кол-во кассиров">{station.employees.cashiers}</Row>
-      <Row title="Кол-во заправщиков">{station.employees.refuelers}</Row>
-      <Row title="Кол-во охранников">{station.employees.securityes}</Row>
+      <Row title="Кол-во заправщиков">{station.employees.refuellers}</Row>
+      <Row title="Кол-во охранников">{station.employees.securitys}</Row>
     </div>
   );
 };

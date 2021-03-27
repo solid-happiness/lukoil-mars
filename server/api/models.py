@@ -1,11 +1,12 @@
 from __future__ import annotations
+
+from copy import deepcopy
+from random import uniform
 from typing import List
 
 from django.db import models
+
 from . import desicionmaking
-
-from random import uniform
-
 
 MAP_COORDS = {
     'left_x': 56.26077286,
@@ -80,15 +81,17 @@ class FuelStation:
     busy_to: int
     employees: List[Employee]
     actions: List[str]
+    state: str
 
-    def __init__(self, id=None, fuel_amount=None, location=None, columns=None, busy_to=None, employees=None, actions=None) -> None:
+    def __init__(self, id=None, fuel_amount=None, location=None, columns=None, busy_to=None, employees=None, actions=None, state=None) -> None:
         self.id = id
         self.fuel_amount = fuel_amount
         self.location = location
         self.columns = columns
         self.busy_to = busy_to
         self.employees = employees
-        self.actions = []
+        self.actions = actions
+        self.state = state
 
     def get_employees_stat(self):
         employees = {
@@ -110,6 +113,7 @@ class FuelStation:
             'employees': self.get_employees_stat(),
             'state': 'ready',
             'actions': self.actions,
+            'state': self.state,
         }
 
 
@@ -145,7 +149,6 @@ class Snapshot:
             ],
         }
 
-
     @classmethod
     def from_dict(cls, params):
         new_snapshot = cls()
@@ -175,7 +178,7 @@ class Snapshot:
                         station.get('location').get('latitude'),
                         station.get('location').get('longitude'),
                     ),
-                    columns= station.get('columns') and [
+                    columns=station.get('columns') and [
                         FuelColumn()
                         for _
                         in station.get('columns')
@@ -279,10 +282,10 @@ class Emulation(models.Model):
         station_amount_fuel = params.get('stationAmountFuel')
         stations_count = int(params.get('stationsCount'))
         tankers_count = int(params.get('tankersCount'))
-        start_snapshot = Snapshot()
-        start_snapshot.timestamp = 1
-        start_snapshot.bank = 0
-        start_snapshot.fuel_storage_amount = storage_amount_fuel
+        snapshot = Snapshot()
+        snapshot.timestamp = 1
+        snapshot.bank = 0
+        snapshot.fuel_storage_amount = storage_amount_fuel
 
         tankers = []
         for i in range(tankers_count):
@@ -320,22 +323,24 @@ class Emulation(models.Model):
                             dismissal_probability=0,
                             contract='tk',
                         )
-                    ]
+                    ],
+                    actions=[],
+                    state='ready'
                 )
             )
-            start_snapshot.fuel_stations = fuel_stations
-            start_snapshot.tankers = tankers
+            snapshot.fuel_stations = fuel_stations
+            snapshot.tankers = tankers
 
         result = []
 
         for i in range(int(params.get('monthTimestampCount')) * 12):
-            new_snapshot = desicionmaking.make_snapshot(
-                start_snapshot,
+            snapshot = desicionmaking.make_snapshot(
+                snapshot,
                 config,
             )
-            result.append(new_snapshot.to_dict())
-            new_snapshot.timestamp += 1
-        
+            result.append(deepcopy(snapshot).to_dict())
+            snapshot.timestamp += 1
+
         emulate = cls.objects.create(
             config=config,
             snapshots=result,
@@ -353,7 +358,8 @@ class Emulation(models.Model):
             if i == snapshot_id:
                 snapshot = Snapshot.from_dict(snapshots[i-1])
         for i in range(snapshot_id, config.month_timestamp_count * 12):
-            snapshots[i] = desicionmaking.make_snapshot(snapshot, config).to_dict()
+            snapshots[i] = desicionmaking.make_snapshot(
+                snapshot, config).to_dict()
             snapshots[i-1]['timestamp'] += 1
         emulation.timestamps = snapshots
         emulation.save()

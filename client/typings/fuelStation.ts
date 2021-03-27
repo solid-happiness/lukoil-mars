@@ -10,8 +10,8 @@ export type FuelStation = {
   actions: ['Наняли нового сотрудника'];
   employees: {
     directors: number;
-    refuelers: number;
+    refuellers: number;
     cashiers: number;
-    securityes: number;
+    securitys: number;
   };
 };
