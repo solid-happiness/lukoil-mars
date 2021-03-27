@@ -87,8 +87,8 @@ export const CreateTaskAction: React.FC<Props> = ({
 
         const task: Task = JSON.parse(String(content));
 
-        dispatch(showTaskForm());
         dispatch(setTask({ task }));
+        dispatch(showTaskForm());
 
         onClose();
       });

@@ -22,7 +22,7 @@ import {
 } from 'client/slices';
 import { getTask, getSnapshots, getActiveSnapshot } from 'client/selectors';
 
-import { Bank } from './Bank';
+import { Common } from './Common';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -150,7 +150,11 @@ export const Player: React.FC = () => {
           </IconButton>
         )}
         {!!activeSnapshot?.bank && (
-          <Bank bank={activeSnapshot?.bank} result={last(snapshots)?.bank} />
+          <Common
+            bank={activeSnapshot?.bank}
+            result={last(snapshots)?.bank}
+            iteration={`${idx + 1}/${snapshots?.length}`}
+          />
         )}
         <IconButton
           onClick={() => {

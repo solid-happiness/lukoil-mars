@@ -19,6 +19,7 @@ MAP_CENTER = (
     (MAP_COORDS['bottom_y'] + MAP_COORDS['top_y']) / 2,
 )
 
+
 def get_new_location():
     return api_models.Location(
         latitude=uniform(
@@ -30,6 +31,7 @@ def get_new_location():
             MAP_COORDS['top_y']
         ),
     )
+
 
 def get_fuel_station_by_id(fuel_stations, id_to_find):
     '''Получаем индекс заправки в списке заправок по ее id'''
@@ -209,7 +211,6 @@ def make_snapshot(snapshot, config):
                     latitude=MAP_CENTER[0],
                     longitude=MAP_CENTER[1],
                 )
-                print('Вызвали танкер, ', timestamp)
                 station.actions.append('Вызвали танкер')
                 break
 

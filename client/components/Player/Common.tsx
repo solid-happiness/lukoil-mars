@@ -15,29 +15,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Bank: React.FC<{ bank: number; result?: number }> = ({
-  bank,
-  result,
-}) => {
+type Props = {
+  bank: number;
+  result?: number;
+  iteration: string;
+};
+
+export const Common: React.FC<Props> = ({ bank, result, iteration }) => {
   const s = useStyles();
   const bankRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const tooltip = tippy(bankRef.current!, {
+    tippy(bankRef.current!, {
       placement: 'right',
       allowHTML: true,
       content: `
         Текущий банк
+        <br>
+        Итерация: ${iteration}
         <br>
         Результат: ${result}₽
       `,
       theme: 'bank',
       arrow: false,
     });
-
-    return () => tooltip.destroy();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [result, iteration]);
 
   return (
     <Typography className={s.root} ref={bankRef} variant="body1">
