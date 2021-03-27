@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 
 from .mock import MOCK_SNAPSHOTS
+from .models import Emulation
 
 
 def csrf(request):
@@ -37,7 +38,9 @@ def create_emulation(request):
         needAdditionalCashierColumnCount - количество заправочных колонок, при котором необходимо нанять дополнительного кассира
         dismissalProbability - вероятность увольнения сотрудника, устроенного по ГПХ
     '''
+    data = json.loads(request.body.decode('utf-8'))
+    result = Emulation.create(data)
     
     return JsonResponse({
-        'shapshots': MOCK_SNAPSHOTS,
+        'shapshots': result,
     })

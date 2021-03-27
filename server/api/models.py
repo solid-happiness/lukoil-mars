@@ -1,9 +1,126 @@
 from __future__ import annotations
+from typing import List
 
 from django.db import models
-from fuel import models as fuel_models
+from . import desicionmaking
+
+
+class Employee:
+    role: str
+    dismissal_probability: float
+    contact: str
+    def __init__(self, role=None, dismissal_probability=None, contract=None) -> None:
+        self.role = role
+        self.dismissal_probability = dismissal_probability
+        self.contact = contract
+
+class FuelColumn:
+    busy_to: int
+    def __init__(self, busy_to=None) -> None:
+        self.busy_to = busy_to
+
+class Location:
+    latitude: float
+    longitude: float
+    def __init__(self, latitude=None, longitude=None) -> None:
+        self.latitude = latitude
+        self.longitude = longitude
+    
+    def to_dict(self):
+        return {
+            'latitude': self.latitude,
+            'longitude': self.longitude
+        }
+
+class Tanker:
+    location: Location
+    delivery_to: int
+    fuel_amount: int
+    busy_to: int
+    def __init__(self, location=None, delivery_to=None, fuel_amount=None, busy_to=None) -> None:
+        self.location = location
+        self.delivery_to = delivery_to
+        self.fuel_amount = fuel_amount
+        self.busy_to = busy_to
+    
+    def to_dict(self):
+        return {
+            'location': self.location.to_dict(),
+            'deliveryTo': self.delivery_to,
+            'fuelAmount': self.fuel_amount
+        }
+
+class FuelStation:
+    id: int
+    fuel_amount: int
+    location: Location
+    columns: List[FuelColumn]
+    busy_to: int
+    employees: List[Employee]
+    def __init__(self, id=None, fuel_amount=None, location=None, columns=None, busy_to=None, employees=None) -> None:
+        self.id = id
+        self.fuel_amount = fuel_amount
+        self.location = location
+        self.columns = columns
+        self.busy_to = busy_to
+        self.employees = employees
+
+    def get_employees_stat(self):
+        employees = {
+            'refueller': 0,
+            'cashier': 0,
+            'director': 0,
+            'security': 0,
+        }
+        for employee in self.employees:
+            employees[employee.role] += 1
+        return employees
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'fuelAmount': self.fuel_amount,
+            'location': self.location.to_dict(),
+            'columnsCount': len(self.columns),
+            'employees': self.get_employees_stat(),
+        }
+
+class Snapshot:
+    timestamp: int
+    config: EmulationConfig
+    bank: int
+    fuel_storage_amount: int
+    fuel_stations: List[FuelStation]
+    tankers: List[Tanker]
+
+    def __init__(self, timestamp=None, config=None, bank=None, fuel_storage_amount=None, fuel_stations=None, tankers=None) -> None:
+        self.timestamp = timestamp
+        self.config = config
+        self.bank = bank
+        self.fuel_storage_amount = fuel_storage_amount
+        self.fuel_stations = fuel_stations
+        self.tankers = tankers
+    
+    def to_dict(self):
+        return {
+            'timestamp': self.timestamp,
+            'bank': self.bank,
+            'fuelStorageAmount': self.fuel_storage_amount,
+            'fuelStations': [
+                station.to_dict()
+                for station
+                in self.fuel_stations
+            ],
+            'tankers': [
+                tanker.to_dict()
+                for tanker
+                in self.tankers
+            ],
+        }
+
 
 class EmulationConfig(models.Model):
+    fuel_supplies = models.JSONField(verbose_name='Распределение поставок по месяцам')
     month_timestamp_count = models.PositiveIntegerField(verbose_name='количество условных единиц в месяце')
     tanker_cost = models.PositiveIntegerField(verbose_name='тоимость покупки танкера для перевозки топлива')
     fuel_delivery_time = models.PositiveIntegerField(verbose_name='время доставки топлива до заправочной станции')
@@ -26,6 +143,7 @@ class EmulationConfig(models.Model):
     @classmethod
     def from_dict(cls, params: dict) -> EmulationConfig:
         return cls.objects.create(
+            fuel_supplies=params.get('fuelSupplies'),
             month_timestamp_count=params.get('monthTimestampCount'),
             tanker_cost=params.get('tankerCost'),
             fuel_delivery_time=params.get('fuelDeliveryTime'),
@@ -46,98 +164,69 @@ class EmulationConfig(models.Model):
 
 
 class Emulation(models.Model):
-    _config = models.ForeignKey(
+    config = models.ForeignKey(
         EmulationConfig,
         on_delete=models.PROTECT,
     )
 
-    def get_config(self) -> EmulationConfig:
-        return self._config
-
     @classmethod
-    def create(cls, params: dict) -> Emulation:
-
+    def create(cls, params: dict) -> dict:
         # Настройки, которые не будут сохранены
         storage_amount_fuel=params.get('storageAmountFuel')
         station_amount_fuel=params.get('stationAmountFuel')
         stations_count=params.get('stationsCount')
         tankers_count=params.get('tankersCount')
+        start_snapshot = Snapshot()
+        start_snapshot.timestamp=1
+        start_snapshot.config=EmulationConfig.from_dict(params)
+        start_snapshot.bank=0
+        start_snapshot.fuel_storage_amount=storage_amount_fuel
 
-        emulation = cls.objects.create(config=EmulationConfig.from_dict(params))
-        fuel_models.Storage.create()
+        tankers = []
         for _ in range(tankers_count):
-            fuel_models.Tanker.create(emulation)
+            tankers.append(
+                Tanker(
+                    location=Location(0, 0),
+                    delivery_to=-1,
+                    fuel_amount=None,
+                    busy_to=0,
+                )
+            )
+        fuel_stations = []
+        for i in range(stations_count):
+            fuel_stations.append(
+                FuelStation(
+                    id=i+1,
+                    fuel_amount=station_amount_fuel,
+                    location=Location(55, 38),
+                    columns=[],
+                    busy_to=0,
+                    employees=[
+                        Employee(
+                            role='director',
+                            dismissal_probability=0,
+                            contract='tk',
+                        ),
+                        Employee(
+                            role='cashier',
+                            dismissal_probability=0,
+                            contract='tk',
+                        ),
+                        Employee(
+                            role='security',
+                            dismissal_probability=0,
+                            contract='tk',
+                        )
+                    ]
+                )
+            )
+            start_snapshot.fuel_stations = fuel_stations
+            start_snapshot.tankers = tankers
+        
+        result = [start_snapshot.to_dict()]
+        
+        for i in range(params.get('monthTimestampCount') * 12):
+            result.append(desicionmaking.make_snapshot(start_snapshot).to_dict())
+            start_snapshot.timestamp += 1
 
-        return emulation
-    
-    def get_fuel_storage(self) -> fuel_models.Storage:
-        return self.storage_set.first()
-
-    def get_shot(self):
-        return {}
-
-
-class EmulationSnapshot(models.Model):
-    timestamp = models.PositiveIntegerField()
-    emulation = models.ForeignKey('Emulation', on_delete=models.PROTECT)
-    state = models.JSONField()
-
-    @classmethod
-    def shot(cls, emulation: Emulation, timestamp: int):
-        cls.objects.create(
-            timestamp=timestamp,
-            emulation=emulation,
-            state=emulation.get_shot()
-        )
-
-
-class Bank(models.Model):
-    _amount = models.BigIntegerField(
-        default=0,
-    )
-
-    def get_amount(self) -> int:
-        return self._amount
-    
-    def take(self, count: int) -> int:
-        self.update(_amount=self.get_amount() - count)
-        return count
-
-    def fill(self, count: int):
-        if count < 0:
-            raise ValueError
-        self.update(_amount=self.get_amount() + count)
-
-    
-    class Meta:
-        verbose_name = 'Банк денег'
-
-
-class Employee(models.Model):
-    ROLES = [
-        ('director', 'Директор'),
-        ('refuiller', 'Заправщик'),
-        ('cashier', 'Кассир'),
-        ('security', 'Охранник'),
-    ]
-    CONTRACTS = [
-        ('tk', 'ТК'),
-        ('gph', 'ГПХ'),
-    ]
-    role = models.CharField(
-        max_length=16,
-        choices=ROLES,
-    )
-    contract = models.CharField(
-        max_length=16,
-        choices=CONTRACTS,
-    )
-
-    def pay_salary(self):
-        pass
-
-    def dissmis(self):
-        pass
-
-    def hire(self):
-        pass
+        return result
